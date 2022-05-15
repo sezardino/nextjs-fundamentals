@@ -1,3 +1,4 @@
+import { Link } from "@/types";
 import { useState } from "react";
 
 export const Header = () => {
@@ -5,7 +6,7 @@ export const Header = () => {
 
   const toggleDropdown = () => setDropDownOpen(!dropDownOpen);
 
-  const dropDownLinks = [
+  const dropDownLinks: Link[] = [
     { href: "#", text: "Edit Profile" },
     { href: "#", text: "Account Settings" },
     { href: "#", text: "Sign Out" },
