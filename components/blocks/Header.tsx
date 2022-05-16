@@ -1,7 +1,10 @@
+import { useUser } from "@/context";
+import { generateAvatarFromName } from "@/helpers";
 import { Link } from "@/types";
 import { useState } from "react";
 
 export const Header = () => {
+  const { user } = useUser();
   const [dropDownOpen, setDropDownOpen] = useState(false);
 
   const toggleDropdown = () => setDropDownOpen(!dropDownOpen);
@@ -21,7 +24,7 @@ export const Header = () => {
           </div>
           <button className="relative" onClick={toggleDropdown}>
             <div className="cursor-pointer font-bold w-10 h-10 bg-blue-200 text-blue-600 flex items-center justify-center rounded-full">
-              A
+              {generateAvatarFromName(user.name)}
             </div>
             <ul
               className={`absolute top-0 mt-12 right-0 w-48 bg-white py-2 shadow-md border border-gray-100 rounded-lg z-40 text-left ${

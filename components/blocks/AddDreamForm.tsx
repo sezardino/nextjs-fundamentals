@@ -41,7 +41,9 @@ export const AddDreamForm: React.FC<Props> = (props) => {
             placeholder="Type Something Nice..."
             value={dreamString}
             className={"mb-2"}
-            onChange={(evt) => setDreamString(evt.target.value)}
+            onChange={(evt: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setDreamString(evt.target.value)
+            }
           />
           {images.length > 0 ? (
             <ImagesPreview images={images} deleteHandler={deleteFirstImage} />

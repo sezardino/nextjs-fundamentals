@@ -1,3 +1,5 @@
+import { Post } from "./post";
+
 export interface Geolocation {
   lat: string;
   lng: string;
@@ -27,3 +29,8 @@ export interface User {
   website: string;
   company: Company;
 }
+
+export type UserData = User & {
+  follows: number[];
+  posts: Post[];
+};
