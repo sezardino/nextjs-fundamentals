@@ -1,16 +1,18 @@
 import type { NextPage } from "next";
-import { AddDreamForm, UsersList } from "@/components";
+import { AddPostForm, PostsList, UsersList } from "@/components";
 import { useEffect, useMemo, useState } from "react";
 import { client } from "@/client";
-import { User } from "@/types";
+import { ShortPostData, User } from "@/types";
 import { useUser } from "@/context";
 
 const Home: NextPage = () => {
-  const { user, addToFollowing, removeFromFollowing } = useUser();
+  const { user, addToFollowing, removeFromFollowing, addPost } = useUser();
+  const [posts, setPosts] = useState<ShortPostData[]>([]);
   const [users, setUsers] = useState<User[] | null>(null);
 
   useEffect(() => {
     client.getUsers().then(setUsers);
+    client.getPosts().then(setPosts);
   }, []);
 
   const followedUsers = useMemo<User[]>(() => {
@@ -29,11 +31,12 @@ const Home: NextPage = () => {
     return users.filter((item) => !user.follows.includes(item.id)).slice(0, 5);
   }, [users, user]);
 
-  const h = (id: number) => console.log(id);
-
   return (
     <div className="grid lg:grid-cols-3 gap-8 items-start">
-      <AddDreamForm className="lg:col-span-2" />
+      <div className="lg:col-span-2 grid gap-4">
+        <AddPostForm handler={addPost} />
+        <PostsList posts={posts} />
+      </div>
       <div className="-order-1 lg:order-1 grid gap-8">
         {followedUsers.length ? (
           <UsersList

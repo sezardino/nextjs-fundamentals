@@ -1,11 +1,11 @@
-import { Post } from "@/types";
+import { ShortPostData } from "@/types";
 
 import CommentsIcon from "@/assets/icons/message.svg";
 import { Avatar, UserData } from "@/components";
 import Link from "next/link";
 
 interface Props extends React.HTMLProps<HTMLUListElement> {
-  posts: Post[];
+  posts: ShortPostData[];
 }
 
 export const PostsList: React.FC<Props> = (props) => {

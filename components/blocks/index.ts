@@ -5,3 +5,5 @@ export * from "./Navigation";
 export * from "./UsersList";
 export * from "./ImagesPreview";
 export * from "./Comment";
+export * from "./UserProfile";
+export * from "./TodoList";

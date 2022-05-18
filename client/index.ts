@@ -47,8 +47,10 @@ export class Client {
     return mappedPosts;
   }
 
-  public async getUsers(): Promise<User[]> {
-    return await this.get<User[]>("users");
+  public async getUsers(limit?: number): Promise<User[]> {
+    const limitString = `?_limit=${limit}`;
+
+    return await this.get<User[]>(`users${limit ? limitString : ""}`);
   }
 
   public async getAlbums(): Promise<Album[]> {
@@ -71,6 +73,25 @@ export class Client {
     return await this.get<Comment[]>(`comments?postId=${postId}`);
   }
 
+  public async getPostsByUserId(userId: number): Promise<ShortPostData[]> {
+    const posts = await this.get<PostInDB[]>(`posts?userId=${userId}`);
+
+    const mappedPosts = await Promise.all(
+      posts.map(async (post) => {
+        const comments = await this.getCommentsForPost(post.id);
+        const { id, username, name } = await this.getUser(post.userId);
+
+        return {
+          ...post,
+          commentsCount: comments.length,
+          user: { name, username, id },
+        };
+      })
+    );
+
+    return mappedPosts;
+  }
+
   public async getUser(id: number): Promise<User> {
     return await this.get<User>(`users/${id}`);
   }
@@ -87,6 +108,10 @@ export class Client {
     };
 
     return { ...post, user, comments };
+  }
+
+  public async getUserTodos(id: number): Promise<Todo[]> {
+    return await this.get<Todo[]>(`todos?userId=${id}`);
   }
 }
 
