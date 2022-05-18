@@ -1,14 +1,19 @@
 import { FormEvent, useState } from "react";
 
-import { ImageInput } from "@/components";
-import { Button, Input } from "../UI";
-import { ImagesPreview } from "./ImagesPreview";
+import { ImageInput, Button, Input, ImagesPreview } from "@/components";
+import { CreatePostDto } from "@/types";
+import { useUser } from "@/context";
+import { Avatar } from "../UI";
 
-interface Props extends React.HTMLProps<HTMLDivElement> {}
+interface Props extends React.HTMLProps<HTMLDivElement> {
+  handler: (data: CreatePostDto) => void;
+}
 
-export const AddDreamForm: React.FC<Props> = (props) => {
+export const AddPostForm: React.FC<Props> = (props) => {
+  const { handler } = props;
+  const { user } = useUser();
   const [images, setImages] = useState<string[]>([]);
-  const [dreamString, setDreamString] = useState("");
+  const [body, setBody] = useState("");
 
   const addImage = (image: string) => {
     setImages((arr) => [...arr, image]);
@@ -18,31 +23,55 @@ export const AddDreamForm: React.FC<Props> = (props) => {
     setImages(images.slice(1));
   };
 
+  const resetFormData = () => {
+    setImages([]);
+    setBody("");
+  };
+
   const submitHandler = (evt: FormEvent) => {
     evt.preventDefault();
+    console.log(1);
 
-    if (dreamString.length < 140) {
+    if (!body || !images.length) {
       return;
     }
+
+    if (body.length > 140 || images.length > 4) {
+      return;
+    }
+
+    const formData: CreatePostDto = {};
+
+    if (images.length) {
+      formData.images = images;
+    }
+
+    if (body) {
+      formData.body = body;
+    }
+
+    handler(formData);
+    resetFormData();
   };
 
   return (
     <div className={`bg-white rounded-lg shadow p-6 ${props.className}`}>
       <div className="flex w-full">
-        <div className="flex-shrink-0 mr-5">
-          <div className="cursor-pointer font-bold w-12 h-12 bg-gray-300 flex items-center justify-center rounded-full">
-            <span className="uppercase text-gray-700">CU</span>
-          </div>
-        </div>
+        <Avatar
+          href="/profile"
+          name={user.name}
+          userId={user.id}
+          className="flex-shrink-0 mr-5"
+        />
         <form className="flex-1" onSubmit={submitHandler}>
           <Input
             isTextarea={true}
             rows={3}
             placeholder="Type Something Nice..."
-            value={dreamString}
+            value={body}
             className={"mb-2"}
             onChange={(evt: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setDreamString(evt.target.value)
+              setBody(evt.target.value)
             }
           />
           {images.length > 0 ? (
@@ -52,20 +81,20 @@ export const AddDreamForm: React.FC<Props> = (props) => {
           <div className="flex justify-between items-center">
             <ImageInput addImage={addImage} />
             <div className="flex gap-2 items-center">
-              {dreamString.length > 0 && (
+              {body.length > 0 && (
                 <span
                   className={`${
-                    dreamString.length < 50
+                    body.length < 50
                       ? "text-green-600"
-                      : dreamString.length < 100
+                      : body.length < 100
                       ? "text-yellow-600"
                       : "text-red-500"
                   }`}
                 >
-                  {dreamString.length}
+                  {body.length}
                 </span>
               )}
-              <Button type="button">Add</Button>
+              <Button type="submit">Add</Button>
             </div>
           </div>
         </form>

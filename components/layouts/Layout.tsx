@@ -1,5 +1,4 @@
-import { Header } from "@/components";
-import { Navigation } from "./Navigation";
+import { Header, Navigation } from "@/components";
 
 interface Props extends React.HTMLProps<HTMLDivElement> {}
 

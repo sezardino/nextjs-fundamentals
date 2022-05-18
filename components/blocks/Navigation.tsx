@@ -1,14 +1,15 @@
 import { Link } from "@/types";
+import LinkComponent from "next/link";
 
 interface Props extends React.HTMLProps<HTMLUListElement> {}
 
 export const Navigation: React.FC<Props> = (props) => {
   const navList: Link[] = [
-    { href: "#", text: "Profile" },
-    { href: "#", text: "Albums" },
-    { href: "#", text: "Posts" },
-    { href: "#", text: "Todo's" },
-    { href: "#", text: "Users" },
+    { href: "/profile", text: "Profile" },
+    { href: "/albums", text: "Albums" },
+    { href: "/", text: "Posts" },
+    { href: "/todo", text: "Todo's" },
+    { href: "users", text: "Users" },
   ];
 
   return (
@@ -17,9 +18,9 @@ export const Navigation: React.FC<Props> = (props) => {
     >
       {navList.map((link, index) => (
         <li key={`${link.href}-${index}`}>
-          <a href={link.href} className="text-blue-400 px-4 py-1 inline-block">
-            {link.text}
-          </a>
+          <LinkComponent href={link.href}>
+            <a className="text-blue-400 px-4 py-1 inline-block">{link.text}</a>
+          </LinkComponent>
         </li>
       ))}
     </ul>

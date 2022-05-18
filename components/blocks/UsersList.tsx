@@ -1,5 +1,5 @@
-import { generateAvatarFromName } from "@/helpers";
-import { User } from "../../types";
+import { Avatar, UserData, Button } from "@/components";
+import { User } from "@/types";
 
 interface Props extends React.HTMLProps<HTMLDivElement> {
   users: User[];
@@ -20,30 +20,22 @@ export const UsersList: React.FC<Props> = (props) => {
         {users.map((user) => (
           <li
             key={user.id}
-            className="px-6 py-3 border-b border-gray-200 last:border-none"
+            className="px-6 py-3 border-b border-gray-200 last:border-none flex w-full"
           >
-            <div className="flex w-full">
-              <div className="flex-shrink-0 mr-5">
-                <div className="cursor-pointer font-bold w-12 h-12 bg-gray-300 flex items-center justify-center rounded-full">
-                  <span className="uppercase text-gray-700">
-                    {generateAvatarFromName(user.name)}
-                  </span>
-                </div>
-              </div>
-              <div className="flex-1 flex flex-row justify-between items-center">
-                <div>
-                  <p className="text-gray-700">{user.name}</p>
-                  <p className="text-gray-500">{user.username}</p>
-                </div>
-                <div>
-                  <button
-                    className="focus:outline-none py-1 px-4 rounded-full shadow-sm text-center text-blue-600 bg-white hover:bg-blue-100 font-medium border border-blue-200"
-                    onClick={() => handler(user.id)}
-                  >
-                    {label}
-                  </button>
-                </div>
-              </div>
+            <Avatar
+              name={user.name}
+              userId={user.id}
+              className="flex-shrink-0 mr-5"
+            />
+            <div className="flex-1 flex flex-row justify-between items-center">
+              <UserData
+                name={user.name}
+                userId={user.id}
+                username={user.username}
+              />
+              <Button variant="secondary" onClick={() => handler(user.id)}>
+                {label}
+              </Button>
             </div>
           </li>
         ))}
