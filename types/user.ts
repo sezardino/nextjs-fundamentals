@@ -34,3 +34,5 @@ export type UserData = User & {
   follows: number[];
   posts: Post[];
 };
+
+export type ShortUserData = Pick<User, "name" | "username" | "id">;

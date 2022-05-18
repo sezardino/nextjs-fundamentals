@@ -1,4 +1,14 @@
-import { Album, Photo, Post, Todo, User } from "@/types";
+import {
+  Album,
+  Photo,
+  Post,
+  PostInDB,
+  ShortPostData,
+  ShortUserData,
+  Todo,
+  User,
+  Comment,
+} from "@/types";
 
 export class Client {
   constructor(private readonly clientURL: string) {}
@@ -8,8 +18,33 @@ export class Client {
     return await response.json();
   }
 
-  public async getPosts(): Promise<Post[]> {
-    return await this.get<Post[]>("posts");
+  public async getPosts(): Promise<ShortPostData[]> {
+    const data = await Promise.all([
+      this.getUsers(),
+      this.get<PostInDB[]>("posts"),
+      this.getComments(),
+    ]);
+
+    const users = data[0];
+    const posts = data[1];
+    const comments = data[2];
+
+    const mappedPosts = posts.map((post) => {
+      const user = users.find((user) => user.id === post.userId);
+
+      return {
+        ...post,
+        user: {
+          id: user!.id,
+          name: user!.name,
+          username: user!.username,
+        },
+        commentsCount: comments.filter((comment) => comment.postId === post.id)
+          .length,
+      };
+    });
+
+    return mappedPosts;
   }
 
   public async getUsers(): Promise<User[]> {
@@ -24,8 +59,34 @@ export class Client {
     return await this.get<Photo[]>("photos");
   }
 
+  public async getComments(): Promise<Comment[]> {
+    return await this.get<Comment[]>("comments");
+  }
+
   public async getTodos(): Promise<Todo[]> {
     return await this.get<Todo[]>("todos");
+  }
+
+  public async getCommentsForPost(postId: number): Promise<Comment[]> {
+    return await this.get<Comment[]>(`comments?postId=${postId}`);
+  }
+
+  public async getUser(id: number): Promise<User> {
+    return await this.get<User>(`users/${id}`);
+  }
+
+  public async getPost(id: number): Promise<Post> {
+    const post = await this.get<PostInDB>(`posts/${id}`);
+    const userData = await this.getUser(post.userId);
+    const comments = await this.getCommentsForPost(id);
+
+    const user: ShortUserData = {
+      id: userData.id,
+      name: userData.name,
+      username: userData.username,
+    };
+
+    return { ...post, user, comments };
   }
 }
 
